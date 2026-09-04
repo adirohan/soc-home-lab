@@ -94,7 +94,7 @@ No service versions were identified because the ports were filtered and did not 
 
 Screenshot:
 
-![Service Detection](screenshots/service-detection.png)
+![Service Detection](screenshots/service-detection-scan.png)
 
 ---
 
