@@ -29,7 +29,7 @@ ping -c 4 192.168.56.102
 
 
 
-## Observation
+ Observation
 The purpose of this was just to generate some basic network traffic between the two lab machines.
 I then checked the SOC side to see if there was any related activity or log available.
 Screenshot
