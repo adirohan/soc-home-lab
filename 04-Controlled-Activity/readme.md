@@ -26,11 +26,3 @@ I started with a simple network activity from the Kali machine against the Windo
 
 ```bash
 ping -c 4 192.168.56.102
-
-
-
- Observation
-The purpose of this was just to generate some basic network traffic between the two lab machines.
-I then checked the SOC side to see if there was any related activity or log available.
-Screenshot
-The screenshot for this activity is saved in the screenshots folder.
