@@ -167,3 +167,22 @@ This showed that Wazuh telemetry was active, but the PowerShell process enumerat
 
 ## Wazuh Screenshot
 ![Wazuh Power shell observation](screenshots/06-wazuh-powershell-observation.png)
+
+## 6. Windows User/Account Activity
+
+I performed controlled user/account activity on the Windows endpoint and then reviewed the Wazuh Events dashboard for agent 001.
+
+### SOC/Wazuh Observation
+
+Wazuh successfully recorded multiple Windows account-management events, including:
+
+- User account enabled or created
+- User account changed
+- Users Group Changed
+- Domain Users Group Changed
+
+The events were associated with the `SOC-WIN01` endpoint and demonstrated that the current Wazuh configuration is collecting and detecting Windows account-related activity.
+
+### Screenshot
+
+![Wazuh user account activity](screenshots/06-wazuh-user-activity.png)
