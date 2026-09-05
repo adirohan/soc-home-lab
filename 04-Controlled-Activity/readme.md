@@ -96,6 +96,8 @@ This was consistent with the previous port test, where TCP port 445 was reported
 ![SMB connection attempt](screenshots/04-smb-connection-attempt.png)
 
 
+
+
 ### SOC/Wazuh Observation
 
 I checked the Wazuh Events dashboard for the Windows endpoint after performing the SMB connection attempt.
@@ -104,6 +106,9 @@ No event directly related to the SMB connection attempt was observed. The availa
 
 This showed that the SMB connection attempt did not automatically generate a visible Wazuh alert with the current lab configuration.
 
+## Screenshot
+
+![Wazuh SMB check](screenshots/04-wazuh-smb-check.png)
 
 
 
