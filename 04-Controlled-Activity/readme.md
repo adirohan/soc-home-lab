@@ -76,3 +76,5 @@ This means that the port did not provide a normal response to the scan, indicati
 
 ## Screenshot
 ![SMB port scan](./screenshots/03-smb-port-test.png
+
+---
