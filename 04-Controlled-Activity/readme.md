@@ -29,10 +29,10 @@ ping -c 4 192.168.56.102
 ```
 ## Observation
 
-The purpose of this was just to generate some basic network traffic between the two lab machines.
+The ping was successful and all four packets were received with 0% packet loss. This confirmed that the Windows endpoint was reachable from the Kali machine over the lab network.
 
-I then checked the SOC side to see if there was any related activity or log available.
+The average response time was around 1.79 ms.
 
 ## Screenshot
 
-The screenshot for this activity is saved in the `screenshots` folder.
+![Ping network activity](./screenshots/01-ping-network-activity.png)
