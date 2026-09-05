@@ -166,4 +166,4 @@ However, the events visible during the observation period were Windows account a
 This showed that Wazuh telemetry was active, but the PowerShell process enumeration activity did not generate a directly visible event with the current lab configuration.
 
 ## Wazuh Screenshot
-![Wazuh user activity observation](screenshots/07-wazuh-user-activity.png)
+![Wazuh Power shell observation](screenshots/07-wazuh-powershell-observation.png)
