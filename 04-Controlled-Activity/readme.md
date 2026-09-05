@@ -131,9 +131,39 @@ This showed that the connection attempt reached the endpoint, but no HTTP respon
 ## SOC/Wazuh Observation
 
 I checked the Wazuh Events dashboard on the Windows endpoint after performing the HTTP connection attempt.
-
 No event directly related to the curl HTTP connection attempt was observed in Wazuh.
 
 This showed that the HTTP connection attempt did not generate a visible Wazuh alert with the current lab configuration.
 
 ![Wazuh HTTP observation](screenshots/05-wazuh-http-observation.png)
+
+
+## 5. Controlled PowerShell Activity
+
+I performed a basic PowerShell process enumeration activity on the Windows endpoint.
+
+### Command
+
+```powershell
+Get-Process | Select-Object -First 10
+```
+## Observation
+
+The command successfully displayed the first ten running processes on the Windows endpoint. This provided a basic view of active processes without making any system changes.
+
+## Screenshot
+![PowerShell basic activity](screenshots/06-powershell-basic-activity.png)
+
+
+## SOC/Wazuh Observation
+
+I checked the Wazuh Events dashboard on the Windows endpoint after running the PowerShell process enumeration command.
+
+Wazuh was receiving events from SOC-WIN01, confirming that the endpoint was actively sending telemetry to the Wazuh manager.
+
+However, the events visible during the observation period were Windows account and group-related events. No event directly associated with the Get-Process command was observed.
+
+This showed that Wazuh telemetry was active, but the PowerShell process enumeration activity did not generate a directly visible event with the current lab configuration.
+
+## Wazuh Screenshot
+![Wazuh user activity observation](screenshots/07-wazuh-user-activity.png)
