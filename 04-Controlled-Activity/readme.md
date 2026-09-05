@@ -36,3 +36,23 @@ The average response time was around 1.79 ms.
 ## Screenshot
 
 ![Ping network activity](./screenshots/01-ping-network-activity.png)
+
+---
+
+## 2. Controlled Port Scanning Activity
+
+I performed a basic TCP port scan from the Kali machine against the Windows endpoint to generate controlled network scanning activity.
+
+### Command
+
+```bash
+nmap -sT 192.168.56.102
+```
+## Observation
+
+The Windows endpoint was detected as up and reachable. Nmap scanned the default 1000 TCP ports, but all scanned ports were reported as filtered.
+
+This indicates that the Windows endpoint was reachable, while the scanned ports did not provide a response to the connection attempts.
+
+## Screenshot
+![Nmap port scan](./screenshots/02-port-scan.png)
