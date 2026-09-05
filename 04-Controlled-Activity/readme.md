@@ -56,3 +56,23 @@ This indicates that the Windows endpoint was reachable, while the scanned ports 
 
 ## Screenshot
 ![Nmap port scan](./screenshots/02-port-scan.png)
+
+---
+
+## 3. Controlled SMB Port Test
+
+I performed a focused TCP port test against the Windows endpoint to check the standard SMB port.
+
+### Command
+
+```bash
+nmap -sT -p 445 192.168.56.102
+```
+## Observation
+
+The Windows endpoint was detected as up and reachable. The standard SMB port, 445/tcp, was reported as filtered by Nmap.
+
+This means that the port did not provide a normal response to the scan, indicating that the traffic was being filtered.
+
+## Screenshot
+![SMB port scan](./screenshots/03-smb-port-test.png
