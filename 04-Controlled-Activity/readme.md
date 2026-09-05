@@ -75,6 +75,6 @@ The Windows endpoint was detected as up and reachable. The standard SMB port, 44
 This means that the port did not provide a normal response to the scan, indicating that the traffic was being filtered.
 
 ## Screenshot
-![SMB port scan](./screenshots/03-smb-port-test.png
+![SMB port scan](screenshots/03-smb-port-test.png)
 
 ---
