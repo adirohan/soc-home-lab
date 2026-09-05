@@ -134,4 +134,4 @@ No event directly related to the curl HTTP connection attempt was observed in Wa
 
 This showed that the HTTP connection attempt did not generate a visible Wazuh alert with the current lab configuration.
 
-![Wazuh HTTP observation](screenshots/065-wazuh-http-observation.png)
+![Wazuh HTTP observation](screenshots/05-wazuh-http-observation.png)
