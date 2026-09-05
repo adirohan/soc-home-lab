@@ -78,3 +78,19 @@ This means that the port did not provide a normal response to the scan, indicati
 ![SMB port scan](screenshots/03-smb-port-test.png)
 
 ---
+## 4. Controlled SMB Connection Attempt
+
+I attempted to connect to the Windows endpoint using SMB from the Kali machine.
+
+### Command
+
+```bash
+smbclient -L //192.168.56.102 -N
+```
+## Observation
+The SMB connection attempt failed with an NT_STATUS_IO_TIMEOUT error.
+
+This was consistent with the previous port test, where TCP port 445 was reported as filtered. The SMB connection could therefore not be established from the Kali machine.
+
+## Screenshot
+![SMB connection attempt](screenshots/04-smb-connection-attempt.png)
