@@ -119,8 +119,9 @@ I performed a basic HTTP connection attempt from the Kali machine against the Wi
 
 ```bash
 curl -I http://192.168.56.102
-![HTTP connection attempt](screenshots/05-http-connection-attempt.png)
 ```
+![HTTP connection attempt](screenshots/05-http-connection-attempt.png)
+
 ## Observation
 
 The HTTP connection attempt did not succeed because the Windows endpoint was not providing an HTTP service on port 80.
