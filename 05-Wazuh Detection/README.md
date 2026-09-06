@@ -188,7 +188,7 @@ The command successfully created the scheduled task on the Windows endpoint.
 
 ### Windows Evidence
 
-![Scheduled Task Creation](screenshots/6-scheduled-task-creation.png)
+![Scheduled Task Creation](screenshots/06-scheduled-task-creation.png)
 
 ### Wazuh Detection
 
@@ -206,7 +206,7 @@ The detected event contained:
 
 ### Wazuh Evidence
 
-![Wazuh Scheduled Task Detection](screenshots/6-wazuh-scheduled-task-detection.png)
+![Wazuh Scheduled Task Detection](screenshots/06-wazuh-scheduled-task-detection.png)
 
 ### SOC Interpretation
 
