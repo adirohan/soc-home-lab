@@ -129,3 +129,51 @@ Windows process creation telemetry provides useful visibility into programs exec
 ### Detection Workflow
 
 **PowerShell Activity → Process Creation → Windows Security Event 4688 → Wazuh Collection → SOC Investigation**
+
+## 05.5 Windows Service Creation Detection
+
+A controlled Windows service creation activity was performed on the Windows endpoint (SOC-WIN01) to generate service creation telemetry and verify its visibility in Wazuh.
+
+### Controlled Activity
+
+An administrative PowerShell session was used to create a test Windows service:
+
+    sc.exe create SOC-Lab-Service binPath= "C:\Windows\System32\svchost.exe -k netsvcs" start= demand
+
+The command completed successfully with:
+
+    [SC] CreateService SUCCESS
+
+### Evidence
+
+Windows PowerShell Activity
+
+![Windows Service Creation](screenshots/05.5-windows-service-creation.png)
+
+### Wazuh Detection
+
+Wazuh successfully detected the Windows service creation activity.
+
+The event was identified using:
+
+    Rule Description: New Windows Service Created
+    Rule ID: 61138
+    Rule Level: 5
+    Agent: SOC-WIN01
+    MITRE Technique: T1543.003
+    Technique: Windows Service
+    Tactic: Persistence, Privilege Escalation
+
+Wazuh Detection Evidence
+
+![Wazuh Windows Service Detection](screenshots/05.5-wazuh-service-creation.png)
+
+### SOC Interpretation
+
+Windows service creation is security-relevant because attackers can abuse services to establish persistence or execute malicious programs.
+
+In this controlled lab, a test service was intentionally created to validate that Wazuh could observe and detect the activity.
+
+The detection demonstrates the workflow:
+
+    Windows Service Creation → Windows Event Telemetry → Wazuh Detection → SOC Investigation
