@@ -108,6 +108,205 @@ The lab also provided practical experience with:
 - Process Creation auditing
 - Controlled user account creation
 - Wazuh event monitoring
+
+
+# 6.1. Windows Security Monitoring
+
+This section focuses on monitoring security-relevant activity on the Windows endpoint using native Windows Security logs and Wazuh.
+
+The purpose of this lab is to understand how Windows records authentication activity and how those events can be collected and investigated through Wazuh.
+
+## Lab Objective
+
+The objective of this section was to:
+
+- Understand Windows Security event logging
+- Monitor successful and failed authentication activity
+- Identify important Windows Security Event IDs
+- Generate controlled authentication activity
+- Verify that the events are recorded locally by Windows
+- Verify that the same events are visible in Wazuh
+- Understand how a SOC analyst can use authentication telemetry during an investigation
+
+## Environment
+
+| Component | Details |
+|---|---|
+| Windows Endpoint | SOC-WIN01 |
+| Windows Hostname | soc-windows |
+| Monitoring Platform | Wazuh |
+| Log Source | Windows Security Event Log |
+| Authentication Events | 4624, 4625 |
+
+---
+
+## 06.1 Windows Security Event Logging
+
+Windows records security-related activities in the Security event log.
+
+For this lab, the Windows Security log was used to observe authentication activity generated on the endpoint.
+
+The audit policy was verified using the following PowerShell command:
+
+    auditpol /get /subcategory:"Logon"
+
+The result confirmed that Logon auditing was enabled for both successful and failed authentication attempts:
+
+    Logon    Success and Failure
+
+This allows Windows to generate security events for both successful and unsuccessful logon attempts.
+
+---
+
+## 06.2 Successful Logon Detection
+
+Windows Security Event ID 4624 represents a successful account logon.
+
+A successful logon event was observed on the Windows endpoint and verified through Event Viewer.
+
+### Event Details
+
+- Event ID: 4624
+- Log: Security
+- Source: Microsoft-Windows-Security-Auditing
+- Task Category: Logon
+- Keywords: Audit Success
+- Computer: soc-windows
+
+The event confirms that Windows successfully recorded an authentication event.
+
+### Evidence
+
+![Windows Successful Logon Event](screenshots/02-successful-logon.png)
+
+The event was also observed through Wazuh, confirming that Windows Security authentication telemetry was being collected by the Wazuh agent.
+
+### Wazuh Evidence
+
+![Wazuh Successful Logon Event](screenshots/02-wazuh-successful-logon.png)
+
+---
+
+## 06.3 Failed Logon Detection
+
+Windows Security Event ID 4625 represents a failed account logon.
+
+Controlled failed authentication attempts were generated on the Windows endpoint by entering an incorrect password for the vboxuser account.
+
+Windows recorded the activity as Event ID 4625.
+
+### Event Details
+
+- Event ID: 4625
+- Log: Security
+- Source: Microsoft-Windows-Security-Auditing
+- Task Category: Logon
+- Keywords: Audit Failure
+- Account: vboxuser
+- Logon Type: 2
+- Failure Reason: Unknown user name or bad password
+
+The event was verified locally using PowerShell:
+
+    Get-WinEvent -FilterHashtable @{LogName='Security'; Id=4625} -MaxEvents 5 |
+    Select-Object TimeCreated, Id, Message
+
+The command returned multiple Event ID 4625 records.
+
+### Windows Evidence
+
+![Windows Failed Logon Event](screenshots/01-failed-logon.png)
+
+The detailed event showed that the authentication attempt for vboxuser failed because of an incorrect username or password.
+
+### Wazuh Evidence
+
+The same Windows authentication failure was observed in Wazuh.
+
+![Wazuh Failed Logon Event](screenshots/01-wazuh-failed-logon.png)
+
+This confirmed the complete telemetry path:
+
+**Failed Authentication → Windows Security Event 4625 → Wazuh Agent → Wazuh Manager → SOC Investigation**
+
+---
+
+## 06.4 Comparing Successful and Failed Authentication
+
+The two events provide different security signals:
+
+| Event ID | Meaning | Security Status |
+|---|---|---|
+| 4624 | Successful logon | Audit Success |
+| 4625 | Failed logon | Audit Failure |
+
+A single failed logon does not necessarily indicate malicious activity. Users can enter an incorrect password or make a normal authentication mistake.
+
+However, repeated failed logons, unusual account names, unusual logon times, unexpected source systems, or a sequence of failed attempts followed by a successful login can become important indicators during a SOC investigation.
+
+This is why authentication events are useful when analysed together with other endpoint and network telemetry.
+
+---
+
+## 06.5 PowerShell Verification
+
+Windows Security events were also queried directly from the endpoint using PowerShell.
+
+Failed logons were verified with:
+
+    Get-WinEvent -FilterHashtable @{LogName='Security'; Id=4625} -MaxEvents 5 |
+    Select-Object TimeCreated, Id, Message
+
+Successful logons were verified with:
+
+    Get-WinEvent -FilterHashtable @{LogName='Security'; Id=4624} -MaxEvents 5 |
+    Select-Object TimeCreated, Id, Message
+
+This provided a second method of validating the events independently of the graphical Event Viewer.
+
+---
+
+## 06.6 SOC Interpretation
+
+Authentication monitoring is an important part of endpoint security monitoring.
+
+A SOC analyst can use Windows authentication events to investigate questions such as:
+
+- Who attempted to log in?
+- Was the authentication successful or unsuccessful?
+- Which account was involved?
+- Was the login interactive or remote?
+- Were there multiple failed attempts?
+- Did a successful login occur after repeated failures?
+- Is the activity consistent with normal user behaviour?
+- Does the authentication activity correlate with other suspicious events?
+
+For example, repeated Event ID 4625 records for the same account may require investigation, especially when combined with other indicators.
+
+Event ID 4624 can then help determine whether an account eventually authenticated successfully.
+
+---
+
+## Detection Workflow
+
+The authentication monitoring workflow demonstrated in this lab was:
+
+**User Authentication Activity → Windows Security Audit → Event ID 4624 / 4625 → Wazuh Agent Collection → Wazuh Manager → SOC Investigation**
+
+---
+
+## Key Takeaways
+
+This lab demonstrated how Windows Security logs provide useful authentication telemetry for SOC monitoring.
+
+The main events investigated were:
+
+- 4624 — Successful logon
+- 4625 — Failed logon
+
+The activity was generated in a controlled lab environment and verified through Windows Event Viewer and PowerShell, followed by validation in Wazuh.
+
+This establishes the foundation for investigating authentication-related activity and correlating it with other endpoint security events in later sections of the SOC lab.
 - Wazuh rule identification
 - Basic SOC event analysis
 
