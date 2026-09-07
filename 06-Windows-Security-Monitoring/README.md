@@ -52,7 +52,7 @@ This activity was performed intentionally to generate Windows account-management
 
 ### Windows Activity
 
-![Windows Account Creation](screenshots/02-account-creation-windows.png)
+![Windows Account Creation](screenshots/01-windows-audit-setup.png)
 
 ---
 
@@ -78,7 +78,7 @@ A related account-change event was also observed:
 
 ### Wazuh Evidence
 
-![Wazuh Account Activity Detection](screenshots/03-wazuh-account-activity.png)
+![Wazuh Account Activity Detection](screenshots/02-wazuh-event-detection.png)
 
 This confirmed that the account-management activity generated on Windows was successfully collected and processed by Wazuh.
 
