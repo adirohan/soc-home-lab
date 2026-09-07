@@ -345,29 +345,34 @@ Understanding these relationships is important for detecting and investigating s
 ## Screenshots
 
 ### 1. Process Creation — 4688
-![Process Creation - 4688](01-process-creation-4688.png)
+![Process Creation — 4688](./screenshots/01-process-creation-4688.png)
 
 ### 2. Process Creation — Command Line Details
-![4688 Command Line Process Details](02-4688-command-line-process-details.png)
+![4688 Command Line Process Details](./screenshots/02-4688-command-line-process-details.png)
 
 ### 3. Process Creation — 4688 Details
-![Process Creation - 4688 Details](02-process-creation-4688-details.png)
+![Process Creation — 4688 Details](./screenshots/02-process-creation-4688-details.png)
 
 ### 4. Wazuh — Process Investigation
-![Wazuh Process Investigation](03-wazuh-4688-process-investigation.png)
+![Wazuh Process Investigation](./screenshots/03-wazuh-4688-process-investigation.png)
 
 ### 5. PowerShell — Command Line
-![PowerShell Command Line](04-4688-powershell-command-line.png)
+![PowerShell Command Line](./screenshots/04-4688-powershell-command-line.png)
 
 ### 6. Wazuh — PowerShell Process Detection
-![Wazuh PowerShell Process Detection](04-wazuh-powershell-process-detection.png)
+![Wazuh PowerShell Process Detection](./screenshots/04-wazuh-powershell-process-detection.png)
 
 ### 7. Wazuh — Encoded PowerShell Detection
-![Wazuh Encoded PowerShell Detection](05-wazuh-encoded-powershell.png)
+![Wazuh Encoded PowerShell Detection](./screenshots/05-wazuh-encoded-powershell.png)
 
-### 8. PowerShell — Command Execution
-![PowerShell Command](06-wazuh-powershell-command.png)
+### 8. PowerShell — Command
+![PowerShell Command](./screenshots/06-wazuh-powershell-command.png)
 
+### 9. Wazuh — Encoded PowerShell Detection
+![Wazuh Encoded PowerShell Detection](./screenshots/07-wazuh-encoded-powershell-detection.png)
+
+### 10. PowerShell — Decoded Command
+![Decoded PowerShell Command](./screenshots/08-powershell-command-decoded.png)
 ### 9. Wazuh — Encoded PowerShell Detection
 ![Wazuh Encoded PowerShell Detection](07-wazuh-encoded-powershell-detection.png)
 
