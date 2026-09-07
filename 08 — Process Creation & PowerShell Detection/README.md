@@ -61,7 +61,7 @@ Command used:
 
 Windows generated a new process creation event.
 
-![02 - Process Creation Details](screenshots/02-process-creation-4688-details.png)
+![02 - Process Creation Details](screenshots/01-process-creation-4688.png)
 
 ---
 
@@ -76,7 +76,7 @@ Command used:
 
 The output showed multiple process creation events.
 
-![03 - Wazuh 4688 Process Investigation](screenshots/03-wazuh-4688-process-investigation.png)
+![03 - Wazuh 4688 Process Investigation](screenshots/01-process-creation-4688.png.png)
 
 ---
 
@@ -93,7 +93,7 @@ Important fields included:
 - Process Command Line
 - Token Elevation Type
 
-![04 - 4688 PowerShell Command Line](screenshots/04-4688-powershell-command-line.png)
+![04 - 4688 PowerShell Command Line](screenshots/02-process-creation-4688.png)
 
 ---
 
@@ -113,7 +113,7 @@ This demonstrates the flow:
         ↓
     Wazuh Event / Alert
 
-![04 - Wazuh PowerShell Process Detection](screenshots/04-wazuh-powershell-process-detection.png)
+![04 - Wazuh PowerShell Process Detection](screenshots/03-wazuh-4688-process-investigation.png)
 
 ---
 
@@ -123,7 +123,7 @@ The Wazuh event contained PowerShell command-line information.
 
 This is important because simply seeing `powershell.exe` does not tell the SOC analyst what PowerShell actually executed.
 
-![06 - Wazuh PowerShell Command](screenshots/06-wazuh-powershell-command.png)
+![06 - Wazuh PowerShell Command](screenshots/03-wazuh-4688-process-investigation.png)
 
 ---
 
