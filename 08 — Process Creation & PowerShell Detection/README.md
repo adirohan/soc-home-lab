@@ -1,178 +1,367 @@
-# 08. Windows Process Creation & PowerShell Detection
+# 08 — Process Creation & PowerShell Detection
 
-This section demonstrates Windows process creation monitoring and PowerShell activity detection using Windows Security Event ID 4688 and Wazuh.
+## Overview
 
-The objective was to enable process creation auditing, generate controlled process activity, and verify that the resulting telemetry was collected and visible through Wazuh.
+In this lab, I configured Windows Security auditing and Wazuh to monitor **Process Creation (Event ID 4688)** and investigate PowerShell activity.
 
----
+The objective was to understand how a SOC analyst can detect:
 
-## 08.1 Process Creation Auditing
-
-Windows Process Creation auditing was enabled using an elevated PowerShell session.
-
-The following audit policy was configured:
-
-    auditpol /set /subcategory:"Process Creation" /success:enable /failure:enable
-
-This enables Windows to generate Security Event ID 4688 whenever a new process is created.
-
-### Evidence
-
-![Windows Process Creation Audit](screenshots/01-process-creation-4688.png)
+- New process creation
+- PowerShell process execution
+- Parent/child process relationships
+- PowerShell command-line activity
+- Encoded PowerShell commands
+- Wazuh detection of PowerShell execution
+- Investigation of Windows Event ID 4688
 
 ---
 
-## 08.2 Windows Event ID 4688 — Process Creation
+## Lab Environment
 
-A controlled process was executed on the Windows endpoint to generate Event ID 4688.
-
-The event confirms that Windows recorded the creation of a new process.
-
-### Evidence
-
-![Windows Event 4688 Process Creation Details](screenshots/02-process-creation-4688-details.png)
-
----
-
-## 08.3 Event 4688 Command-Line Information
-
-The generated Event ID 4688 was inspected to verify the command-line information associated with the created process.
-
-Command-line visibility is valuable for SOC investigations because it provides additional context about how a process was executed.
-
-### Evidence
-
-![Event 4688 Command Line Details](screenshots/02-4688-command-line-process-details.png)
+| Component | Details |
+|---|---|
+| Endpoint | Windows 11 SOC-WIN01 |
+| Wazuh Agent | Agent ID `001` |
+| Endpoint IP | `192.168.56.102` |
+| Event Log | Windows Security |
+| Event ID | `4688` |
+| Activity | Process Creation |
+| SIEM | Wazuh |
+| Detection Source | Windows Security Event Logs |
 
 ---
 
-## 08.4 Wazuh Process Creation Detection
+## 1. Enable Process Creation Auditing
 
-The Windows process creation event was collected by the Wazuh agent and displayed in the Wazuh dashboard.
+I first verified that Windows auditing for **Process Creation** was enabled.
 
-The event included process-related information such as:
+Command used:
 
-- Agent name
-- Process ID
-- New process name
-- Parent process
-- Command line
-- User information
+    auditpol /get /subcategory:"Process Creation"
 
-### Evidence
+The result showed:
 
-![Wazuh Event 4688 Process Investigation](screenshots/03-wazuh-4688-process-investigation.png)
+- Detailed Tracking
+- Process Creation
+- Success and Failure
 
----
+This confirms that Windows is configured to generate process creation events.
 
-## 08.5 PowerShell Process Creation
-
-PowerShell activity was generated on the Windows endpoint to demonstrate how PowerShell execution appears in Windows Event ID 4688.
-
-The command-line information provides useful context for identifying PowerShell-based activity.
-
-### Evidence
-
-![Event 4688 PowerShell Command Line](screenshots/04-4688-powershell-command-line.png)
+![01 - Process Creation Auditing](screenshots/01-process-creation-4688.png)
 
 ---
 
-## 08.6 Wazuh PowerShell Process Detection
+## 2. Generate a Process Creation Event
 
-The PowerShell process creation event was successfully collected and displayed by Wazuh.
+I launched Notepad to generate a Windows Security **Event ID 4688**.
 
-This provides visibility into PowerShell execution occurring on the monitored Windows endpoint.
+Command used:
 
-### Evidence
+    Start-Process notepad.exe
 
-![Wazuh PowerShell Process Detection](screenshots/04-wazuh-powershell-process-detection.png)
+Windows generated a new process creation event.
 
----
-
-## 08.7 Encoded PowerShell Activity
-
-A controlled PowerShell command using the `-EncodedCommand` parameter was executed.
-
-Encoded PowerShell commands are important from a SOC perspective because attackers may use encoding to make command-line activity less immediately readable.
-
-### Evidence
-
-![Wazuh Encoded PowerShell](screenshots/05-wazuh-encoded-powershell.png)
+![02 - Process Creation Details](screenshots/02-process-creation-4688-details.png)
 
 ---
 
-## 08.8 PowerShell Command-Line Visibility in Wazuh
+## 3. Investigate Event ID 4688
 
-The Wazuh event was inspected to verify that PowerShell command-line information was available for investigation.
+I queried the Windows Security log for Event ID `4688`.
 
-This demonstrates how command-line telemetry can help a SOC analyst understand process execution.
+Command used:
 
-### Evidence
+    Get-WinEvent -FilterHashtable @{LogName='Security'; Id=4688} -MaxEvents 10 |
+    Select-Object -First 10 TimeCreated, Id, Message
 
-![Wazuh PowerShell Command](screenshots/06-wazuh-powershell-command.png)
+The output showed multiple process creation events.
 
----
-
-## 08.9 Encoded PowerShell Detection
-
-The encoded PowerShell process was further investigated through the Wazuh event data.
-
-The event contained the PowerShell executable and encoded command information in the process command-line field.
-
-### Evidence
-
-![Wazuh Encoded PowerShell Detection](screenshots/07-wazuh-encoded-powershell-detection.png)
+![03 - Wazuh 4688 Process Investigation](screenshots/03-wazuh-4688-process-investigation.png)
 
 ---
 
-## 08.10 PowerShell Command Decoding
+## 4. Investigate Process Command-Line Details
 
-The encoded PowerShell command was examined to demonstrate how encoded command-line activity can be investigated by a SOC analyst.
+I investigated the detailed Event ID 4688 information.
 
-### Evidence
+Important fields included:
 
-![PowerShell Command Decoded](screenshots/08-powershell-command-decoded.png)
+- New Process ID
+- New Process Name
+- Creator Process ID
+- Creator Process Name
+- Process Command Line
+- Token Elevation Type
 
----
-
-## 08.11 Detection Workflow
-
-The practical followed this workflow:
-
-Windows Process Creation Audit
-→ Controlled Process Execution
-→ Security Event ID 4688
-→ Wazuh Agent Collection
-→ Wazuh Detection
-→ SOC Investigation
+![04 - 4688 PowerShell Command Line](screenshots/04-4688-powershell-command-line.png)
 
 ---
 
-## 08.12 SOC Analyst Takeaway
+## 5. Verify Process Creation in Wazuh
 
-Windows Event ID 4688 provides visibility into process creation on Windows endpoints.
+The Windows process creation event was also received by Wazuh.
 
-For a SOC analyst, process creation telemetry can help identify:
+This demonstrates the flow:
 
-- Suspicious PowerShell execution
-- Unusual parent-child process relationships
-- Encoded commands
-- Unexpected executables
-- Suspicious command-line activity
-- Potential execution of attacker tools
+    Windows Endpoint
+        ↓
+    Windows Security Event 4688
+        ↓
+    Wazuh Agent
+        ↓
+    Wazuh Manager
+        ↓
+    Wazuh Event / Alert
 
-The presence of a PowerShell or encoded-command event alone does not prove malicious activity. The analyst should investigate the process, user, parent process, command line, timing, and surrounding events before determining whether the activity is suspicious.
+![04 - Wazuh PowerShell Process Detection](screenshots/04-wazuh-powershell-process-detection.png)
 
 ---
 
-## 08.13 Practical Result
+## 6. Inspect PowerShell Command-Line Activity
 
-This practical successfully demonstrated:
+The Wazuh event contained PowerShell command-line information.
 
-- Windows Process Creation auditing
-- Security Event ID 4688
-- PowerShell process monitoring
-- Command-line visibility
-- Encoded PowerShell activity
-- Wazuh collection of Windows process telemetry
-- SOC-style process investigation
+This is important because simply seeing `powershell.exe` does not tell the SOC analyst what PowerShell actually executed.
+
+![06 - Wazuh PowerShell Command](screenshots/06-wazuh-powershell-command.png)
+
+---
+
+## 7. Generate Encoded PowerShell Activity
+
+I then tested an encoded PowerShell command.
+
+Encoded PowerShell is important from a defensive perspective because encoding can make the original command less immediately readable during investigation.
+
+![05 - Wazuh Encoded PowerShell](screenshots/05-wazuh-encoded-powershell.png)
+
+---
+
+## 8. Investigate Encoded PowerShell Detection
+
+Wazuh captured the encoded PowerShell process creation event.
+
+The event contained the PowerShell command line and process information that can be used by a SOC analyst for investigation.
+
+![07 - Wazuh Encoded PowerShell Detection](screenshots/07-wazuh-encoded-powershell-detection.png)
+
+---
+
+## 9. Decode the PowerShell Command
+
+The encoded PowerShell command was decoded to identify the original command.
+
+The decoded command was:
+
+    Write-Output "SOC-LAB-ENCODED"
+
+This demonstrates the investigation process:
+
+    Encoded PowerShell
+        ↓
+    Extract encoded data
+        ↓
+    Decode
+        ↓
+    Read original command
+        ↓
+    Determine actual behavior
+
+![08 - PowerShell Command Decoded](screenshots/08-powershell-command-decoded.png)
+
+---
+
+## 10. PowerShell Detection with Command-Line Details
+
+I also tested a normal PowerShell command:
+
+    powershell.exe -NoProfile -Command "Write-Output 'SOC-LAB-PS-DETECTION'"
+
+The resulting Event ID `4688` contained the PowerShell command line.
+
+This demonstrates how process creation monitoring can provide visibility into PowerShell execution.
+
+![PowerShell Command Detection](screenshots/06-wazuh-powershell-command.png)
+
+---
+
+# Investigation Flow
+
+The complete investigation flow was:
+
+    Windows Endpoint
+          ↓
+    Process Created
+          ↓
+    Windows Security Event ID 4688
+          ↓
+    Wazuh Agent
+          ↓
+    Wazuh Manager
+          ↓
+    Wazuh Alert / Event
+          ↓
+    SOC Analyst Investigation
+          ↓
+    Inspect Process Name
+          ↓
+    Inspect Parent Process
+          ↓
+    Inspect Command Line
+          ↓
+    Identify PowerShell Activity
+          ↓
+    Decode Encoded Command
+          ↓
+    Determine Actual Behavior
+
+---
+
+# Key SOC Concepts Learned
+
+## Event ID 4688 — Process Creation
+
+Windows Security Event ID `4688` records the creation of a new process.
+
+A SOC analyst can use it to investigate:
+
+- What process was created?
+- Which user created it?
+- What was the parent process?
+- What command line was used?
+- Was PowerShell involved?
+- Was the command encoded?
+
+---
+
+## Parent and Child Processes
+
+Process creation events provide information about relationships between processes.
+
+For example:
+
+    powershell.exe
+          ↓
+      child process
+
+The **Creator Process Name** and **Creator Process ID** help establish this relationship.
+
+---
+
+## Command-Line Investigation
+
+The process name alone is not always enough.
+
+For example:
+
+    powershell.exe
+
+does not tell the analyst what PowerShell executed.
+
+The command line provides additional context.
+
+Example:
+
+    powershell.exe -NoProfile -Command "Write-Output 'SOC-LAB-PS-DETECTION'"
+
+---
+
+## Encoded PowerShell
+
+PowerShell supports encoded commands.
+
+From a SOC perspective, encoded PowerShell should be investigated because encoding can make the original command less immediately readable.
+
+The investigation process is:
+
+    Encoded PowerShell
+          ↓
+    Extract encoded data
+          ↓
+    Decode
+          ↓
+    Read original command
+          ↓
+    Determine whether behavior is suspicious
+
+Encoding by itself does not automatically mean that the activity is malicious. The decoded command and surrounding context must be investigated.
+
+---
+
+# Important Takeaways
+
+- Windows can generate process creation telemetry through Event ID `4688`.
+- Wazuh can collect and expose this telemetry for investigation.
+- Process creation events contain valuable information about processes and their parent processes.
+- PowerShell command-line visibility is useful during SOC investigations.
+- Encoded PowerShell deserves investigation because the original command may not be immediately readable.
+- Decoding the command helps the analyst understand the actual activity.
+- Event ID `4688` can be an important source of endpoint detection and investigation data.
+
+---
+
+# Skills Practiced
+
+- Windows Security Event Logs
+- Event ID 4688
+- Process Creation Auditing
+- PowerShell Monitoring
+- PowerShell Command-Line Analysis
+- Parent/Child Process Investigation
+- Wazuh Alert Investigation
+- Encoded PowerShell Analysis
+- Basic SOC Detection & Investigation
+
+---
+
+# Screenshots
+
+All screenshots collected during this lab are stored in the `screenshots/` directory.
+
+## Process Creation
+
+![01 - Process Creation](screenshots/01-process-creation-4688.png)
+
+![02 - Process Creation Details](screenshots/02-process-creation-4688-details.png)
+
+![02 - Command Line Process Details](screenshots/02-4688-command-line-process-details.png)
+
+![03 - Wazuh 4688 Process Investigation](screenshots/03-wazuh-4688-process-investigation.png)
+
+## PowerShell Detection
+
+![04 - 4688 PowerShell Command Line](screenshots/04-4688-powershell-command-line.png)
+
+![04 - Wazuh PowerShell Process Detection](screenshots/04-wazuh-powershell-process-detection.png)
+
+![05 - Wazuh Encoded PowerShell](screenshots/05-wazuh-encoded-powershell.png)
+
+![06 - Wazuh PowerShell Command](screenshots/06-wazuh-powershell-command.png)
+
+![07 - Wazuh Encoded PowerShell Detection](screenshots/07-wazuh-encoded-powershell-detection.png)
+
+![08 - PowerShell Command Decoded](screenshots/08-powershell-command-decoded.png)
+
+---
+
+# Conclusion
+
+This lab demonstrated how a SOC analyst can use Windows process creation telemetry and Wazuh to investigate PowerShell activity.
+
+The main investigation chain was:
+
+    Process Creation
+          ↓
+    Event ID 4688
+          ↓
+    Wazuh
+          ↓
+    PowerShell Command Line
+          ↓
+    Encoded PowerShell
+          ↓
+    Decode
+          ↓
+    Understand the Actual Command
+
+This lab provided practical experience with endpoint telemetry, SIEM investigation, process analysis, PowerShell detection, and basic command-line investigation.
