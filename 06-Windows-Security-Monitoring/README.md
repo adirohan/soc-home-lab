@@ -103,11 +103,11 @@ The event was also visible in Wazuh, confirming that Windows authentication tele
 
 ### Windows Evidence
 
-![Windows Successful Logon](screenshots/04-successful-logon.png)
+![Windows Successful Logon](screenshots/02-successful-logon.png)
 
 ### Wazuh Evidence
 
-![Wazuh Successful Logon](screenshots/04-wazuh-successful-logon.png)
+![Wazuh Successful Logon](screenshots/02-wazuh-successful-logon.png)
 
 ---
 
@@ -139,13 +139,13 @@ The command returned multiple Event ID 4625 records.
 
 ### Windows Evidence
 
-![Windows Failed Logon](screenshots/05-failed-logon.png)
+![Windows Failed Logon](screenshots/01-failed-logon.png)
 
 ### Wazuh Evidence
 
 The same authentication failure was observed in Wazuh.
 
-![Wazuh Failed Logon](screenshots/05-wazuh-failed-logon.png)
+![Wazuh Failed Logon](screenshots/01-wazuh-failed-logon.png)
 
 This confirmed the telemetry path:
 
