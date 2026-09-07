@@ -342,72 +342,34 @@ Understanding these relationships is important for detecting and investigating s
 
 ---
 
-# Screenshots
+## Screenshots
 
-## Screenshot (10)
+### 1. Process Creation — 4688
+![Process Creation - 4688](01-process-creation-4688.png)
 
-![Screenshot (10)](screenshots/Screenshot%20%2810%29.png)
+### 2. Process Creation — Command Line Details
+![4688 Command Line Process Details](02-4688-command-line-process-details.png)
 
-## Screenshot (11)
+### 3. Process Creation — 4688 Details
+![Process Creation - 4688 Details](02-process-creation-4688-details.png)
 
-![Screenshot (11)](screenshots/Screenshot%20%2811%29.png)
+### 4. Wazuh — Process Investigation
+![Wazuh Process Investigation](03-wazuh-4688-process-investigation.png)
 
-## Screenshot (12)
+### 5. PowerShell — Command Line
+![PowerShell Command Line](04-4688-powershell-command-line.png)
 
-![Screenshot (12)](screenshots/Screenshot%20%2812%29.png)
+### 6. Wazuh — PowerShell Process Detection
+![Wazuh PowerShell Process Detection](04-wazuh-powershell-process-detection.png)
 
-## Screenshot (13)
+### 7. Wazuh — Encoded PowerShell Detection
+![Wazuh Encoded PowerShell Detection](05-wazuh-encoded-powershell.png)
 
-![Screenshot (13)](screenshots/Screenshot%20%2813%29.png)
+### 8. PowerShell — Command Execution
+![PowerShell Command](06-wazuh-powershell-command.png)
 
-## Screenshot (14)
+### 9. Wazuh — Encoded PowerShell Detection
+![Wazuh Encoded PowerShell Detection](07-wazuh-encoded-powershell-detection.png)
 
-![Screenshot (14)](screenshots/Screenshot%20%2814%29.png)
-
-## Screenshot (15)
-
-![Screenshot (15)](screenshots/Screenshot%20%2815%29.png)
-
-## Screenshot (16)
-
-![Screenshot (16)](screenshots/Screenshot%20%2816%29.png)
-
-## Screenshot (17)
-
-![Screenshot (17)](screenshots/Screenshot%20%2817%29.png)
-
-## Screenshot (18)
-
-![Screenshot (18)](screenshots/Screenshot%20%2818%29.png)
-
-## Screenshot (19)
-
-![Screenshot (19)](screenshots/Screenshot%20%2819%29.png)
-
-## Screenshot (20)
-
-![Screenshot (20)](screenshots/Screenshot%20%2820%29.png)
-
-## Screenshot (21)
-
-![Screenshot (21)](screenshots/Screenshot%20%2821%29.png)
-
-## Screenshot (22)
-
-![Screenshot (22)](screenshots/Screenshot%20%2822%29.png)
-
-## Screenshot (23)
-
-![Screenshot (23)](screenshots/Screenshot%20%2823%29.png)
-
-## Screenshot (24)
-
-![Screenshot (24)](screenshots/Screenshot%20%2824%29.png)
-
-## Screenshot (25)
-
-![Screenshot (25)](screenshots/Screenshot%20%2825%29.png)
-
-## Screenshot (26)
-
-![Screenshot (26)](screenshots/Screenshot%20%2826%29.png)
+### 10. PowerShell — Decoded Command
+![Decoded PowerShell Command](08-powershell-command-decoded.png)
