@@ -374,7 +374,7 @@ Understanding these relationships is important for detecting and investigating s
 ### 10. PowerShell — Decoded Command
 ![Decoded PowerShell Command](./screenshots/08-powershell-command-decoded.png)
 ### 9. Wazuh — Encoded PowerShell Detection
-![Wazuh Encoded PowerShell Detection](07-wazuh-encoded-powershell-detection.png)
+![Wazuh Encoded PowerShell Detection](./screenshots/07-wazuh-encoded-powershell-detection.png)
 
 ### 10. PowerShell — Decoded Command
-![Decoded PowerShell Command](08-powershell-command-decoded.png)
+![Decoded PowerShell Command](./screenshots/08-powershell-command-decoded.png)
