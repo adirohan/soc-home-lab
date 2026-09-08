@@ -1,5 +1,8 @@
 # 09 — Persistence Detection
 
+
+## Practical - 1
+
 ## Objective
 
 The objective of this lab was to simulate a Windows persistence mechanism using a Registry Run Key, detect the registry modification using Wazuh, investigate the generated alert, and verify that the persistence mechanism executed after user logon.
@@ -246,7 +249,7 @@ This lab specifically demonstrated the Registry Run Keys portion of the techniqu
 
 ---
 
-## 13. Evidence Screenshots
+## Practical - 1 Evidence Screenshots
 
 ### Screenshot 01 — Registry Persistence Created
 
@@ -311,3 +314,253 @@ The complete SOC workflow was:
     SOC Assessment
 
 This practical demonstrates how endpoint telemetry and Wazuh can be used to identify and investigate Windows Registry-based persistence.
+
+
+# Practical 2 — Startup Folder Persistence
+
+## 1. Access the Startup Folder
+
+The current user's Startup Folder was opened using:
+
+    shell:startup
+
+The Startup Folder is a Windows startup location where shortcuts can be configured to launch applications automatically when the user logs in.
+
+---
+
+## 2. Create Startup Folder Persistence
+
+A shortcut named:
+
+    SOC-Lab-Startup.lnk
+
+was created in the user's Startup Folder.
+
+The shortcut targeted:
+
+    C:\Windows\System32\notepad.exe
+
+The persistence flow was:
+
+    Windows User Login
+            ↓
+    Startup Folder
+            ↓
+    SOC-Lab-Startup.lnk
+            ↓
+    notepad.exe
+            ↓
+    Notepad Automatically Launches
+
+### Evidence
+
+![Startup Persistence Created](09-02-startup-persistence-created.png)
+
+This screenshot shows the Startup Folder containing the persistence shortcut.
+
+---
+
+## 3. Verify Startup Shortcut
+
+The shortcut properties were checked to verify that the shortcut pointed to:
+
+    C:\Windows\System32\notepad.exe
+
+### Evidence
+
+![Startup Shortcut Properties](09-02-startup-persistence-shortcut-properties.png)
+
+This confirms the relationship between the Startup shortcut and the executable.
+
+---
+
+## 4. Validate Startup Persistence
+
+The Windows system was restarted and the `vboxuser` account logged back in.
+
+After login, Notepad automatically launched from the Startup Folder persistence mechanism.
+
+### Evidence
+
+![Startup Persistence Execution](09-02-startup-persistence-executed.png)
+
+This confirmed that the Startup Folder persistence mechanism successfully executed after login.
+
+---
+
+## 5. Wazuh Process Creation Detection
+
+Wazuh captured the resulting Windows process creation event.
+
+Important telemetry included:
+
+| Field | Value |
+|---|---|
+| Agent | SOC-WIN01 |
+| User | vboxuser |
+| Event ID | 4688 |
+| Rule ID | 67027 |
+| Rule Description | A process was created |
+| Command Line | `C:\Windows\System32\notepad.exe` |
+| Parent Process | `C:\Windows\explorer.exe` |
+| New Process | Windows Notepad |
+
+The event showed `explorer.exe` as the parent process and `notepad.exe` as the newly created process.
+
+### Evidence
+
+![Wazuh Startup Persistence Process Creation](09-02-wazuh-startup-persistence-process-creation.png)
+![Wazuh Startup Persistence Process Creation](09-02-wazuh-startup-persistence-process-creation1.png)
+
+This provides Wazuh telemetry showing the Notepad process creation associated with the Windows user session.
+
+---
+
+# 6. SOC Investigation — Practical 2
+
+The Startup Folder persistence investigation was correlated using three pieces of evidence:
+
+### Persistence Artifact
+
+    SOC-Lab-Startup.lnk
+            ↓
+    Startup Folder
+            ↓
+    notepad.exe
+
+### Execution
+
+    Windows Login
+            ↓
+    Notepad Automatically Started
+
+### Wazuh Telemetry
+
+    Windows Event ID 4688
+            ↓
+    explorer.exe
+            ↓
+    notepad.exe
+            ↓
+    Wazuh Rule 67027
+
+The Wazuh event identified:
+
+- `vboxuser` as the account associated with the process creation
+- `explorer.exe` as the parent process
+- `notepad.exe` as the newly created process
+- Event ID `4688`
+- Wazuh Rule `67027`
+
+---
+
+# 7. Complete Practical 2 Investigation Flow
+
+    Startup Folder Shortcut Created
+                ↓
+    SOC-Lab-Startup.lnk
+                ↓
+    Target: notepad.exe
+                ↓
+    Windows User Login
+                ↓
+    Startup Persistence Executes
+                ↓
+    explorer.exe
+                ↓
+    notepad.exe
+                ↓
+    Windows Security Event ID 4688
+                ↓
+    Wazuh Rule 67027
+                ↓
+    SOC Investigation
+
+---
+
+# 8. SOC Analyst Perspective
+
+Startup Folder persistence can be abused by attackers to execute programs automatically when a user logs into Windows.
+
+During an investigation, a SOC analyst should determine:
+
+- Which user owns the Startup Folder
+- Which shortcut or executable was added
+- What the shortcut points to
+- Whether the target executable is legitimate
+- When the persistence artifact was created
+- Which process executed it
+- Which parent process launched it
+- Whether additional suspicious activity occurred
+- Whether the persistence was authorized
+
+In this controlled lab, `notepad.exe` was intentionally used as a harmless test executable.
+
+---
+
+# 9. MITRE ATT&CK Mapping
+
+**Technique:** T1547.001 — Registry Run Keys / Startup Folder
+
+This section demonstrated both components of the technique:
+
+- Registry Run Key persistence
+- Startup Folder persistence
+
+---
+
+# 10. Detection Summary
+
+| Technique | Persistence Method | Detection | Result |
+|---|---|---|---|
+| Registry Run Key | `HKCU\...\Run` | Wazuh Rule 752 | ✅ Detected |
+| Startup Folder | `.lnk` shortcut | Windows Event ID 4688 / Wazuh Rule 67027 | ✅ Observed |
+
+---
+### Practical 2 — Startup Folder
+
+`09-02-startup-persistence-created.png`
+
+Startup Folder persistence shortcut.
+
+`09-02-startup-persistence-shortcut-properties.png`
+
+Shortcut properties showing the Notepad target.
+
+`09-02-startup-persistence-executed.png`
+
+Notepad automatically launching after login.
+
+`09-02-wazuh-startup-persistence-process-creation.png`
+
+Wazuh Windows Event ID 4688 process creation evidence.
+
+---
+
+# Conclusion
+
+This section demonstrated two Windows persistence mechanisms and their corresponding SOC investigation workflows.
+
+The first practical demonstrated Registry Run Key persistence and Wazuh Rule 752 detection.
+
+The second practical demonstrated Startup Folder persistence and correlated the resulting Notepad execution with Windows Security Event ID 4688 and Wazuh Rule 67027.
+
+The overall defensive workflow was:
+
+    Persistence Creation
+            ↓
+    Windows Endpoint Activity
+            ↓
+    Security Telemetry
+            ↓
+    Wazuh Detection
+            ↓
+    Alert Investigation
+            ↓
+    Process Analysis
+            ↓
+    Persistence Validation
+            ↓
+    SOC Assessment
+
+Both persistence techniques were intentionally performed in an isolated home lab using `notepad.exe` as a harmless test executable.
