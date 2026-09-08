@@ -354,7 +354,7 @@ The persistence flow was:
 
 ### Evidence
 
-![Startup Persistence Created](09-02-startup-persistence-created.png)
+![Startup Persistence Created](./screenshots/09-02-startup-persistence-created.png)
 
 This screenshot shows the Startup Folder containing the persistence shortcut.
 
@@ -368,7 +368,7 @@ The shortcut properties were checked to verify that the shortcut pointed to:
 
 ### Evidence
 
-![Startup Shortcut Properties](09-02-startup-persistence-shortcut-properties.png)
+![Startup Shortcut Properties](./screenshots/09-02-startup-persistence-shortcut-properties.png)
 
 This confirms the relationship between the Startup shortcut and the executable.
 
@@ -382,7 +382,7 @@ After login, Notepad automatically launched from the Startup Folder persistence 
 
 ### Evidence
 
-![Startup Persistence Execution](09-02-startup-persistence-executed.png)
+![Startup Persistence Execution](./screenshots/09-02-startup-persistence-executed.png)
 
 This confirmed that the Startup Folder persistence mechanism successfully executed after login.
 
@@ -409,8 +409,8 @@ The event showed `explorer.exe` as the parent process and `notepad.exe` as the n
 
 ### Evidence
 
-![Wazuh Startup Persistence Process Creation](09-02-wazuh-startup-persistence-process-creation.png)
-![Wazuh Startup Persistence Process Creation](09-02-wazuh-startup-persistence-process-creation1.png)
+![Wazuh Startup Persistence Process Creation](./screenshots/09-02-wazuh-startup-persistence-process-creation.png)
+![Wazuh Startup Persistence Process Creation](./screenshots/09-02-wazuh-startup-persistence-process-creation1.png)
 
 This provides Wazuh telemetry showing the Notepad process creation associated with the Windows user session.
 
