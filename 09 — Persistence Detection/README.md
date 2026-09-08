@@ -61,7 +61,7 @@ The configured value was:
 
 ### Evidence
 
-![Registry Persistence Created](01-persistence-created.png)
+![Registry Persistence Created](./screenshots/01-persistence-created.png)
 
 This screenshot shows the controlled Registry Run Key persistence entry.
 
@@ -79,7 +79,7 @@ The output confirmed:
 
 ### Evidence
 
-![Registry Value Verification](02-registry-value-verification.png)
+![Registry Value Verification](./screenshots/02-registry-value-verification.png)
 
 This confirms that the `SOC-Lab-Test` value exists and is configured to launch `notepad.exe`.
 
@@ -112,7 +112,7 @@ The alert identified the affected Registry Run Key:
 
 ### Evidence
 
-![Wazuh Registry Persistence Detection](09-04-wazuh-registry-persistence-detection.png)
+![Wazuh Registry Persistence Detection](./screenshots/09-04-wazuh-registry-persistence-detection.png)
 
 This demonstrates that Wazuh detected the creation of the Registry Run Key value.
 
@@ -140,7 +140,7 @@ The investigation identified:
 
 ### Evidence
 
-![Wazuh Alert Document Details](03-wazuh-alert-document-details.png)
+![Wazuh Alert Document Details](./screenshots/03-wazuh-alert-document-details.png)
 
 The Document Details view provides detailed endpoint telemetry for the registry persistence event.
 
@@ -158,7 +158,7 @@ The value confirmed:
 
 ### Evidence
 
-![Persistence Value Verification](04-soc-lab-test-registry-value.png)
+![Persistence Value Verification](./screenshots/04-soc-lab-test-registry-value.png)
 
 This confirms the relationship between the Registry Run Key and the configured executable.
 
@@ -174,7 +174,7 @@ This confirmed that the Registry Run Key was functioning as a startup persistenc
 
 ### Evidence
 
-![Persistence Execution After Login](05-persistence-execution-after-login.png)
+![Persistence Execution After Login](./screenshots/05-persistence-execution-after-login.png)
 
 This provides execution-level proof that the configured persistence mechanism worked after user logon.
 
