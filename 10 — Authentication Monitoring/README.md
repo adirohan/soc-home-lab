@@ -4,18 +4,15 @@
 
 The objective of this lab was to monitor Windows authentication activity using Wazuh and investigate authentication context beyond simply identifying a successful logon.
 
-The investigation focused on identifying:
+The investigation focused on:
 
-- The authenticated user
-- Authentication type
-- Logon type
-- Source address
-- Logon session ID
-- Authentication package
-- Logon process
-- Endpoint involved
-
-The goal was to understand how a SOC analyst can use authentication telemetry to establish context around a Windows user session.
+- Identifying the authenticated user
+- Identifying the logon type
+- Identifying the authentication package
+- Identifying the source address
+- Identifying the logon session
+- Identifying the workstation involved
+- Understanding how authentication telemetry can support SOC investigations
 
 ---
 
@@ -28,17 +25,17 @@ The goal was to understand how a SOC analyst can use authentication telemetry to
 | Windows IP | 192.168.56.102 |
 | User | vboxuser |
 | Log Source | Windows Security Event Log |
-| Wazuh Detection | Windows Workstation Logon Success |
+| Windows Event | 4624 |
 | Wazuh Rule | 60118 |
-| Windows Event ID | 4624 |
+| Detection | Windows Workstation Logon Success |
 
 ---
 
-# 1. Authentication Monitoring
+## 1. Authentication Monitoring Overview
 
-Authentication monitoring is important in a SOC because user authentication creates evidence about who accessed an endpoint and how the session was established.
+Authentication monitoring provides visibility into user access to Windows endpoints.
 
-Instead of investigating authentication events only as "successful" or "failed", the analyst can examine the surrounding authentication context.
+From a SOC perspective, an authentication event should not be treated only as "login successful" or "login failed". The analyst should examine the surrounding authentication context.
 
 The investigation workflow was:
 
@@ -50,26 +47,26 @@ The investigation workflow was:
             ↓
     Identify Source
             ↓
-    Identify Logon Session
+    Identify Session
             ↓
     Identify Authentication Package
             ↓
-    Investigate the Authentication Context
+    Investigate Authentication Context
 
 ---
 
-# 2. Wazuh Authentication Detection
+## 2. Detect Windows Authentication with Wazuh
 
-Wazuh was used to collect Windows Security authentication telemetry from the Windows endpoint.
+Wazuh was used to collect Windows Security authentication telemetry from `SOC-WIN01`.
 
-The relevant Wazuh detection was:
+The investigated detection was:
 
 | Field | Value |
 |---|---|
-| Rule ID | 60118 |
+| Windows Event ID | 4624 |
+| Wazuh Rule ID | 60118 |
 | Rule Description | Windows Workstation Logon Success |
 | Rule Level | 3 |
-| Windows Event ID | 4624 |
 | Agent | SOC-WIN01 |
 
 The event was investigated through:
@@ -82,13 +79,13 @@ The event was investigated through:
 
 ### Evidence
 
-![Wazuh Successful Authentication](10-01-wazuh-successful-authentication.png)
+![Wazuh Authentication Event](./screenshots/10-01-wazuh-successful-authentication.png)
 
-This evidence shows the Windows authentication event collected by Wazuh.
+This screenshot shows the authentication event and the important authentication fields collected by Wazuh.
 
 ---
 
-# 3. Authentication Context Investigation
+## 3. Authentication Context Investigation
 
 The Wazuh event was examined to identify the authentication context.
 
@@ -100,6 +97,7 @@ Important fields included:
 | Agent IP | 192.168.56.102 |
 | Authentication Package | Negotiate |
 | Source IP | 127.0.0.1 |
+| Source Port | 0 |
 | Logon Process | User32 |
 | Logon Type | 2 |
 | Target Domain | SOC-WINDOWS |
@@ -109,41 +107,70 @@ Important fields included:
 | Workstation | SOC-WINDOWS |
 | Windows Event ID | 4624 |
 
-The event therefore provided significantly more information than simply showing that authentication succeeded.
+### Evidence
+
+![Authentication User Context](./screenshots/10-01-authentication-user-context.png)
+
+This screenshot shows the user, session, workstation and authentication context identified during the investigation.
+
+---
+
+## 4. Authentication Monitoring Pattern
+
+The Wazuh Threat Hunting view showed multiple `Windows Workstation Logon Success` events for `SOC-WIN01`.
+
+The events were reviewed to understand authentication activity over time rather than examining a single login in isolation.
+
+The investigation considered:
+
+- Number of successful authentication events
+- Timestamp of authentication activity
+- Endpoint involved
+- Authentication rule
+- Repeated authentication patterns
 
 ### Evidence
 
-![Authentication User Context](10-01-authentication-user-context.png)
+![Authentication Monitoring Pattern](./screenshots/10-01-wazuh-logon-success-overview.png)
 
-This evidence shows the user, session, logon type, workstation and related authentication context.
+This screenshot shows the repeated Windows Workstation Logon Success events observed by Wazuh.
 
 ---
 
-# 4. Logon Type Analysis
+## 5. Logon Type Analysis
 
-The event contained:
+The investigated authentication event contained:
 
     Logon Type: 2
 
-Logon Type 2 represents an **Interactive Logon**.
+Logon Type 2 represents an interactive logon.
 
-This is consistent with a local user authentication session rather than a remote RDP session.
+This is consistent with a local interactive user session.
 
-From a SOC perspective, the logon type is important because different authentication mechanisms can have different security implications.
+The logon type is an important investigation field because it helps an analyst understand the context of the authentication event.
 
-For example:
+Examples of different logon contexts include:
 
     Logon Type 2
-    → Interactive / local user session
+    → Interactive
+
+    Logon Type 3
+    → Network
 
     Logon Type 10
-    → Remote Interactive / RDP session
+    → Remote Interactive / RDP
 
-The analyst should therefore examine the logon type together with the user, source address and surrounding activity.
+The analyst should therefore examine the logon type together with the account, source address, workstation and surrounding activity.
+
+### Evidence
+
+![Authentication Context Summary](./screenshots/10-01-authentication-context-combined.png)
+
+This evidence highlights the most important authentication fields from the investigated Event ID 4624.
 
 ---
 
-# 5. User and Session Identification
+## 6. User and Session Identification
 
 The authentication event identified:
 
@@ -159,13 +186,13 @@ The authentication session was identified using:
     Target Logon ID:
     0x44da78
 
-The Logon ID can be useful during investigation because it provides session context that can be compared with other Windows security telemetry where the same identifier is available.
+The Logon ID can provide useful session context when correlating related Windows security events.
 
 ---
 
-# 6. Authentication Source Analysis
+## 7. Source Analysis
 
-The event reported:
+The investigated event reported:
 
     Source IP:
     127.0.0.1
@@ -173,15 +200,15 @@ The event reported:
     Source Port:
     0
 
-The source address is the local loopback address.
+`127.0.0.1` is the local loopback address.
 
-This indicates that this particular authentication event was associated with local authentication activity on the Windows endpoint rather than showing a remote network source.
+Therefore, this particular event does not provide evidence of a remote source IP.
 
-The analyst should therefore avoid interpreting this event as a remote authentication attempt without additional evidence.
+A SOC analyst should avoid interpreting this event as a remote authentication attempt without supporting telemetry.
 
 ---
 
-# 7. Authentication Package and Logon Process
+## 8. Authentication Package and Logon Process
 
 The event reported:
 
@@ -191,33 +218,33 @@ The event reported:
     Logon Process:
     User32
 
-These fields provide additional context about how Windows processed the authentication request.
+These fields provide additional context about how Windows processed the authentication event.
 
-Combining these values with the logon type and target account gives the analyst a more complete picture of the authentication event.
+Together with the user, logon type, source address and session ID, they provide a more complete authentication profile.
 
 ---
 
-# 8. SOC Investigation
+## 9. SOC Investigation
 
 A SOC analyst should not stop at:
 
-    "4624 = successful login"
+    Event ID 4624 = successful login
 
-Instead, the investigation should answer:
+Instead, the analyst should establish the authentication context:
 
     Who authenticated?
-        ↓
+            ↓
     What type of logon occurred?
-        ↓
+            ↓
     Was the source local or remote?
-        ↓
-    What session was created?
-        ↓
+            ↓
+    Which session was created?
+            ↓
     Which authentication package was used?
-        ↓
-    What other activity occurred around the session?
+            ↓
+    What additional activity occurred around the event?
 
-For this lab, the evidence showed:
+For this investigation, the observed context was:
 
     User:
     vboxuser
@@ -237,13 +264,11 @@ For this lab, the evidence showed:
     Logon Process:
     User32
 
-This represents a locally observed interactive authentication session on the Windows endpoint.
+This represents a locally observed interactive authentication session on `SOC-WIN01`.
 
 ---
 
-# 9. Investigation Findings
-
-The authentication event was determined to be:
+## 10. Investigation Findings
 
 | Investigation Item | Finding |
 |---|---|
@@ -253,22 +278,35 @@ The authentication event was determined to be:
 | Windows Event | 4624 |
 | Wazuh Rule | 60118 |
 | Logon Type | 2 — Interactive |
-| Source | 127.0.0.1 |
+| Source Address | 127.0.0.1 |
 | Authentication Package | Negotiate |
 | Logon Process | User32 |
 | Session ID | 0x44da78 |
+| Workstation | SOC-WINDOWS |
 
-No suspicious remote authentication source was established from this particular event.
+No remote authentication source was established from this particular event.
 
 The activity was generated within the controlled home lab environment.
 
 ---
 
-# 10. Detection and Investigation Flow
+## 11. MITRE ATT&CK Context
+
+The investigated Wazuh rule included:
+
+    T1078 — Valid Accounts
+
+Authentication telemetry can be useful when investigating potential use of legitimate accounts for unauthorized access.
+
+In this controlled home lab, the authentication activity was authorized.
+
+---
+
+## 12. Authentication Monitoring Flow
 
     Windows Authentication
             ↓
-    Security Event 4624
+    Windows Security Event 4624
             ↓
     Wazuh Agent
             ↓
@@ -280,97 +318,44 @@ The activity was generated within the controlled home lab environment.
             ↓
     Document Details
             ↓
-    Identify User
+    User Identification
             ↓
-    Analyze Logon Type
+    Logon Type Analysis
             ↓
-    Analyze Source
+    Source Analysis
             ↓
-    Analyze Session
+    Session Analysis
             ↓
     SOC Assessment
 
 ---
 
-# 11. Important SOC Concepts Learned
-
-### Authentication Context
-
-Authentication monitoring provides information about the account and session involved in an authentication event.
-
-### Logon Type
-
-The logon type helps distinguish different forms of authentication, such as interactive and remote interactive sessions.
-
-### Logon ID
-
-The Logon ID provides session-specific context that can help correlate related Windows security events.
-
-### Source Address
-
-The source address helps determine whether authentication originated locally or from another host.
-
-### Authentication Package
-
-The authentication package provides additional context about the authentication mechanism used by Windows.
-
----
-
-# 12. MITRE ATT&CK Context
-
-The Wazuh rule associated with the investigated authentication event included:
-
-    T1078 — Valid Accounts
-
-Authentication telemetry can be useful when investigating the potential use of legitimate accounts for unauthorized access.
-
-In this controlled laboratory exercise, the authentication was authorized and performed by the lab user.
-
----
-
-# 13. Evidence Screenshots
-
-All evidence screenshots for this section are stored in:
-
-    10 — Authentication Monitoring/screenshots/
-
-### Screenshot 01 — Wazuh Successful Authentication
-
-    10-01-wazuh-successful-authentication.png
-
-Shows the Wazuh Document Details for the Windows authentication event.
-
-### Screenshot 02 — Authentication User Context
-
-    10-01-authentication-user-context.png
-
-Shows the target user, user SID, Logon ID, workstation and related authentication fields.
-
----
-
-# 14. Detection Summary
+## 13. Detection Summary
 
 | Item | Result |
 |---|---|
 | Windows authentication telemetry collected | ✅ |
 | Event ID 4624 identified | ✅ |
 | Wazuh Rule 60118 identified | ✅ |
+| Successful authentication identified | ✅ |
 | Target user identified | ✅ |
 | Logon Type identified | ✅ |
 | Source address analyzed | ✅ |
 | Logon session identified | ✅ |
 | Authentication package identified | ✅ |
+| Logon process identified | ✅ |
+| Authentication pattern reviewed | ✅ |
 | Authentication context investigated | ✅ |
 
 ---
 
-# Conclusion
+## Conclusion
 
 This exercise demonstrated authentication monitoring from a SOC investigation perspective.
 
-Rather than treating a successful authentication as a standalone event, the investigation examined the account, logon type, source address, authentication package, logon process, workstation and session identifier.
+Instead of treating a successful authentication as a standalone event, the investigation examined the account, logon type, source address, authentication package, logon process, workstation and session identifier.
 
-The investigation established the following authentication context:
+The investigated authentication context was:
 
     SOC-WIN01
         ↓
@@ -388,4 +373,4 @@ The investigation established the following authentication context:
         ↓
     Authentication Context Investigated
 
-This practical demonstrates how a SOC analyst can use Windows authentication telemetry collected by Wazuh to understand user access and establish context for further investigation.
+This practical demonstrates how Windows authentication telemetry collected by Wazuh can be used to understand user access and establish context for further SOC investigation.
