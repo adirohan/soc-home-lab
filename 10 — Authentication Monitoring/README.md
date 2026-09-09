@@ -553,7 +553,7 @@ Important fields identified from the event included:
 | Workstation | SOC-WINDOWS |
 | Agent | SOC-WIN01 |
 
-![Authentication Event Details](./screenshots/authentication-monitoring-practical-event-details.png)
+![Authentication Event Details](./screenshots/authentication-monitoring-practical-2-rule-mitre.png)
 
 ---
 
