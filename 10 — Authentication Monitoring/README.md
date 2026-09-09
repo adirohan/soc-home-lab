@@ -166,7 +166,7 @@ The analyst should therefore examine the logon type together with the account, s
 
 ### Evidence
 
-![Authentication Context Summary](./screenshots/10-01-authentication-context-combined.png)
+![Authentication Context Summary](./screenshots/10-02-authentication-monitoring-pattern.png)
 
 This evidence highlights the most important authentication fields from the investigated Event ID 4624.
 
