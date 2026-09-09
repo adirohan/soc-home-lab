@@ -512,7 +512,7 @@ The RDP connection successfully opened a Windows desktop session from the Kali L
 
 The session was used to generate legitimate Windows authentication telemetry for SOC monitoring.
 
-![RDP Session](./screenshots/authentication-monitoring-practical-2-rdp-session.png)
+![RDP Session](./screenshots/authentication-monitoring-practical-2-rdp-session.png.png)
 
 ---
 
